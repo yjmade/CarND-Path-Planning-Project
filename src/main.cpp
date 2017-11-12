@@ -8,6 +8,7 @@
 #include "Eigen-3.3/Eigen/Core"
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
+#include "spline.h"
 
 using namespace std;
 
@@ -170,7 +171,7 @@ int main() {
   vector<double> map_waypoints_dy;
 
   // Waypoint map to read from
-  string map_file_ = "../data/highway_map.csv";
+  string map_file_ = "../../data/highway_map.csv";
   // The max s value before wrapping around the track back to 0
   double max_s = 6945.554;
 
@@ -195,6 +196,7 @@ int main() {
   	map_waypoints_dx.push_back(d_x);
   	map_waypoints_dy.push_back(d_y);
   }
+  std::cout<<map_waypoints_y.size();
 
   h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
@@ -208,6 +210,7 @@ int main() {
       auto s = hasData(data);
 
       if (s != "") {
+
         auto j = json::parse(s);
         
         string event = j[0].get<string>();
@@ -235,9 +238,19 @@ int main() {
 
           	json msgJson;
 
-          	vector<double> next_x_vals;
-          	vector<double> next_y_vals;
+            vector<double> next_x_vals;
+            vector<double> next_y_vals;
 
+
+            double dist_inc = 0.4;
+            for(int i = 0; i < 50; i++)
+            {
+              double next_x=car_s+(i+1)*dist_inc;
+              double next_d=6;
+              vector<double> xy=getXY(next_x, next_d, map_waypoints_s, map_waypoints_x, map_waypoints_y);
+              next_x_vals.push_back(xy[0]);
+              next_y_vals.push_back(xy[1]);
+            }
 
           	// TODO: define a path made up of (x,y) points that the car will visit sequentially every .02 seconds
           	msgJson["next_x"] = next_x_vals;
@@ -246,6 +259,7 @@ int main() {
           	auto msg = "42[\"control\","+ msgJson.dump()+"]";
 
           	//this_thread::sleep_for(chrono::milliseconds(1000));
+          cout<<"--------------------------------------\n"<<s<<"\n"<<msg<<"\n";
           	ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
           
         }
