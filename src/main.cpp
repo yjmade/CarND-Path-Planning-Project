@@ -9,6 +9,7 @@
 #include "Eigen-3.3/Eigen/QR"
 #include "json.hpp"
 #include "spline.h"
+#include "car.h"
 
 using namespace std;
 
@@ -249,6 +250,8 @@ int main() {
             double car_yaw = j[1]["yaw"];
             double car_speed = j[1]["speed"];
 
+            Car my_car= Car(car_x, car_y, car_s, car_d, car_speed, car_yaw);
+
             // Previous path data given to the Planner
             auto previous_path_x = j[1]["previous_path_x"];
             auto previous_path_y = j[1]["previous_path_y"];
@@ -258,6 +261,12 @@ int main() {
 
             // Sensor Fusion Data, a list of all other cars on the same side of the road.
             vector<vector<double>> sensor_fusion = j[1]["sensor_fusion"];
+
+            vector<Car> cars;
+
+            for (auto percieves: sensor_fusion){
+              cars.push_back(Car(percieves));
+            }
 
             int prev_size=previous_path_x.size();
 
@@ -271,16 +280,9 @@ int main() {
 
             bool too_close=false;
 
-            for(auto perceived_car: sensor_fusion){
-              float d=perceived_car[6];
-              if(d<(2+4*lane+2) && d > (2+4*lane-2)){
-                double vx=perceived_car[3];
-                double vy=perceived_car[4];
-                double check_speed=sqrt(vx*vx+vy*vy);
-                double check_car_s=perceived_car[5];
-
-                check_car_s+=((double)prev_size*.02*check_speed);
-
+            for(auto car: cars){
+              if (car.lane_==lane){
+                double check_car_s = car.s_+=((double)prev_size*.02*car.speed_);
                 if (check_car_s>car_s && check_car_s-car_s<30){
                   too_close=true;
                   // ref_vel=29.5;
