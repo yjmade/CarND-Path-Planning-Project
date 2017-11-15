@@ -10,6 +10,7 @@
 #include "json.hpp"
 #include "spline.h"
 #include "car.h"
+#include "sensor_fusion.h"
 
 using namespace std;
 
@@ -221,8 +222,9 @@ int main() {
 
   int lane=1;
   double ref_vel=0;
+  SensorFusion sensor_fusion;
 
-  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  h.onMessage([&map_waypoints_x,&map_waypoints_y,&map_waypoints_s,&map_waypoints_dx,&map_waypoints_dy,&lane,&ref_vel,&sensor_fusion](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -260,13 +262,9 @@ int main() {
             double end_path_d = j[1]["end_path_d"];
 
             // Sensor Fusion Data, a list of all other cars on the same side of the road.
-            vector<vector<double>> sensor_fusion = j[1]["sensor_fusion"];
+            vector<vector<double>> raw_sensor_fusion = j[1]["sensor_fusion"];
 
-            vector<Car> cars;
-
-            for (auto percieves: sensor_fusion){
-              cars.push_back(Car(percieves));
-            }
+            sensor_fusion.new_sense(raw_sensor_fusion);
 
             int prev_size=previous_path_x.size();
 
@@ -280,7 +278,7 @@ int main() {
 
             bool too_close=false;
 
-            for(auto car: cars){
+            for(auto car: sensor_fusion.cars_){
               if (car.lane_==lane){
                 double check_car_s = car.s_+=((double)prev_size*.02*car.speed_);
                 if (check_car_s>car_s && check_car_s-car_s<30){
