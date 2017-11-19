@@ -37,10 +37,10 @@ vector<vector<double> > PathPlanner::next_path(){
 
 
     }
-
-    vector<double> next_wp0=getXY(sensor_fusion_.my_car_.s_+30,(2+4*lane_),maps_s_,maps_x_,maps_y_);
-    vector<double> next_wp1=getXY(sensor_fusion_.my_car_.s_+60,(2+4*lane_),maps_s_,maps_x_,maps_y_);
-    vector<double> next_wp2=getXY(sensor_fusion_.my_car_.s_+90,(2+4*lane_),maps_s_,maps_x_,maps_y_);
+    double target_switch_dist=ref_vel_*3;
+    vector<double> next_wp0=getXY(sensor_fusion_.my_car_.s_+target_switch_dist,(2+4*lane_),maps_s_,maps_x_,maps_y_);
+    vector<double> next_wp1=getXY(sensor_fusion_.my_car_.s_+target_switch_dist+30,(2+4*lane_),maps_s_,maps_x_,maps_y_);
+    vector<double> next_wp2=getXY(sensor_fusion_.my_car_.s_+target_switch_dist+60,(2+4*lane_),maps_s_,maps_x_,maps_y_);
 
     ptsx.push_back(next_wp0[0]);
     ptsx.push_back(next_wp1[0]);
