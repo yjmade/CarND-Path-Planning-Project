@@ -135,3 +135,18 @@ vector<double> getXY(double s, double d, const vector<double> &maps_s, const vec
   return {x,y};
 
 }
+
+
+double getAccelation(double current_speed, double target_speed){
+  double diff_speed=target_speed-current_speed;
+  double syn;
+  if (diff_speed>0){
+    syn=1;
+  }else{
+    syn=-1;
+  }
+  if(fabs(diff_speed)<MAX_SPEED_CHANGE){
+    return diff_speed;
+  }
+  return syn*MAX_SPEED_CHANGE;
+};

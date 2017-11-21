@@ -11,6 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
+#include "consts.h"
 
 
 using namespace std;
@@ -21,6 +22,7 @@ constexpr double pi() { return M_PI; }
 inline double deg2rad(double x){ return x * pi() / 180; };
 inline double rad2deg(double x){ return x * 180 / pi(); };
 
+inline double mph2mps(double mph) { return mph * 0.44704; };
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -40,6 +42,8 @@ int NextWaypoint(double x, double y, double theta, const vector<double> &maps_x,
 vector<double> getFrenet(double x, double y, double theta, const vector<double> &maps_x, const vector<double> &maps_y);
 // Transform from Frenet s,d coordinates to Cartesian x,y
 vector<double> getXY(double s, double d, const vector<double> &maps_s, const vector<double> &maps_x, const vector<double> &maps_y);
+
+double getAccelation(double current_speed, double target_speed);
 
 template<typename T>
 ostream& operator<< (ostream& out, const vector<T>& v) {
