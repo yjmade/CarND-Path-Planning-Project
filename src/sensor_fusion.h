@@ -53,7 +53,7 @@ public:
     double get_lane_min_speed_in_front(int lane){
       double min_speed=MAX_SPEED;
       for(auto& car: get_cars_in_lane(lane)){
-        if(s_distance(my_car_.end_s_, car.s_)<0)continue;
+        if(s_distance(my_car_.end_s_, car.end_s_)<0)continue;
         if(car.speed_<min_speed)min_speed=car.speed_;
       }
       return min_speed;
@@ -63,9 +63,23 @@ public:
       double min_distance=numeric_limits<double>::max();
       Car* closest_car=nullptr;
       for(auto& car: get_cars_in_lane(lane)){
-        double distance=s_distance(my_car_.end_s_, car.s_);
+        double distance=s_distance(my_car_.end_s_, car.end_s_);
         if(distance<0)continue;
         if(distance<min_distance){
+          closest_car=&car;
+          min_distance=distance;
+        }
+      }
+      return closest_car;
+    }
+
+    Car* closest_car_in_rear(int lane){
+      double min_distance=-numeric_limits<double>::max();
+      Car* closest_car=nullptr;
+      for(auto& car: get_cars_in_lane(lane)){
+        double distance=s_distance(my_car_.end_s_, car.end_s_);
+        if(distance>0)continue;
+        if(distance>min_distance){
           closest_car=&car;
           min_distance=distance;
         }
