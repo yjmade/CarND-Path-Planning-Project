@@ -58,6 +58,32 @@ ostream& operator<< (ostream& out, const vector<T>& v) {
   return out;
 }
 
+namespace __hidden__ {
+  struct print {
+    bool space;
+    print() : space(false) {}
+    ~print() { std::cout << std::endl; }
+
+    template <typename T>
+    print &operator , (const T &t) {
+      if (space) std::cout << ' ';
+      else space = true;
+      std::cout << t;
+      return *this;
+    }
+  };
+}
+
+#define print __hidden__::print(),
+
 double s_distance(double s1, double s2);
+
+template<typename T>
+T sum(const vector<T> &to_sum){
+  T sum_of_elems=0;
+  for (auto& n : to_sum)
+    sum_of_elems += n;
+  return sum_of_elems;
+};
 
 #endif /* utils_h */
