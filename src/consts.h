@@ -21,12 +21,14 @@ const double MAX_D=LANES*LANE_WIDTH;
 const double MAX_SPEED_CHANGE = mph2mps(0.27);
 
 const double MAX_BUFFER_DISTANCE=100;
+const double MIN_DISTANCE=20;
+const double NO_COLLISION_LIMIT= 10;
 
-const double COST_EFFICIENCY_WEIGHT=1e0;
-const double COST_COMFORT_WEIGHT=1e0;
-const double COST_SAFETY_WEIGHT=1e0;
+const double COST_EFFICIENCY_WEIGHT=8e0;
+const double COST_COMFORT_WEIGHT=3e0;
+const double COST_SAFETY_WEIGHT=8e0;
 const double COST_LEGALITY_WEIGHT=1e6;
-const double COST_FEASIBILITY_WEIGHT=1e0;
+const double COST_FEASIBILITY_WEIGHT=1e1;
 
 const auto PLAN_INTERVAL=chrono::seconds(1);
 const double MAX_S = 6945.554;
