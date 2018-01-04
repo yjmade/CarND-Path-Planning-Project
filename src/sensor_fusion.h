@@ -35,9 +35,9 @@ public:
               new_cars.push_back(car);
         }
         // TODO
-        cout<<"cars"<<cars_.size()<<" news_cars"<<new_cars.size();
+        // cout<<"cars"<<cars_.size()<<" news_cars"<<new_cars.size();
         cars_=new_cars;
-        cout<<"cars_"<<cars_.size()<<endl;
+        // cout<<"cars_"<<cars_.size()<<endl;
     };
 
     vector<Car> get_cars_in_lane(int lane){
@@ -53,10 +53,24 @@ public:
     double get_lane_min_speed_in_front(int lane){
       double min_speed=MAX_SPEED;
       for(auto& car: get_cars_in_lane(lane)){
-        if(car.end_s_<my_car_.end_s_)continue;
+        if(s_distance(my_car_.end_s_, car.s_)<0)continue;
         if(car.speed_<min_speed)min_speed=car.speed_;
       }
       return min_speed;
+    }
+
+    Car* closest_car_in_front(int lane){
+      double min_distance=numeric_limits<double>::max();
+      Car* closest_car=nullptr;
+      for(auto& car: get_cars_in_lane(lane)){
+        double distance=s_distance(my_car_.end_s_, car.s_);
+        if(distance<0)continue;
+        if(distance<min_distance){
+          closest_car=&car;
+          min_distance=distance;
+        }
+      }
+      return closest_car;
     }
 
     Car closest_car(){

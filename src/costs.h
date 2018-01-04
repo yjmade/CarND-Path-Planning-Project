@@ -23,7 +23,7 @@ double cost_comfort(SensorFusion &sensor_fusion, const StateInfo &state){
 
 double cost_safety(SensorFusion &sensor_fusion, const StateInfo &state){
     // get safe buffer distance
-    auto distances=sensor_fusion.get_buffer_distances(state.target_lane_);
+    vector<double> distances=sensor_fusion.get_buffer_distances(state.target_lane_);
     double distance=distances[0]+distances[1];
     double cost=(MAX_BUFFER_DISTANCE-distance)/MAX_BUFFER_DISTANCE;
     if(cost<0)cost=0;
@@ -40,6 +40,8 @@ double cost_legality(SensorFusion &sensor_fusion, const StateInfo &state){
 
 double cost_feasibility(SensorFusion &sensor_fusion, const StateInfo &state){
     //avoid colission
+    auto cars_in_target_lane=sensor_fusion.get_cars_in_lane(state.target_lane_);
+
     return 0;
 }
 

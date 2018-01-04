@@ -11,7 +11,7 @@
 #include <vector>
 #include <iostream>
 #include <cmath>
-#include "consts.h"
+// #include "consts.h"
 
 
 using namespace std;
@@ -57,5 +57,7 @@ ostream& operator<< (ostream& out, const vector<T>& v) {
   out << "]";
   return out;
 }
+
+double s_distance(double s1, double s2);
 
 #endif /* utils_h */

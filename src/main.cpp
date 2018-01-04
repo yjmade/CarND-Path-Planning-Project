@@ -67,8 +67,9 @@ int main() {
 
   int lane=1;
   double ref_vel=0; //m/s
+  auto next_plan_time=chrono::system_clock::now()+PLAN_INTERVAL;
   PathPlanner path_planner=PathPlanner(map_waypoints_s, map_waypoints_x, map_waypoints_y, map_waypoints_dx, map_waypoints_dy);
-  h.onMessage([&lane,&ref_vel, &path_planner](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
+  h.onMessage([&next_plan_time, &path_planner](uWS::WebSocket<uWS::SERVER> ws, char *data, size_t length,
                      uWS::OpCode opCode) {
     // "42" at the start of the message means there's a websocket message event.
     // The 4 signifies a websocket message
@@ -111,7 +112,10 @@ int main() {
 
             path_planner.new_sense(my_car, raw_sensor_fusion, previous_path_x, previous_path_y);
 
-            path_planner.next_state();
+            if (chrono::system_clock::now()>next_plan_time){
+              path_planner.next_state();
+              next_plan_time=chrono::system_clock::now()+PLAN_INTERVAL;
+            }
             vector<vector<double> > next_path = path_planner.next_path();
             //end
 
@@ -123,7 +127,7 @@ int main() {
             auto msg = "42[\"control\","+ msgJson.dump()+"]";
 
             //this_thread::sleep_for(chrono::milliseconds(1000));
-          cout<<"--------------------------------------\n";//<<s<<"\n"<<msg<<"\n";
+          // cout<<"--------------------------------------\n";//<<s<<"\n"<<msg<<"\n";
             ws.send(msg.data(), msg.length(), uWS::OpCode::TEXT);
 
         }

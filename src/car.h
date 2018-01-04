@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <math.h>
+#include "utils.h"
 using namespace std;
 
 const int MYSELF_ID=-1;
@@ -27,7 +28,7 @@ public:
     double end_s_;
 
     Car(){};
-    Car(vector<double> &sensor_fusion, Car my_car, double future_time):
+    Car(const vector<double> &sensor_fusion, const Car &my_car, double future_time):
         id_((int) round(sensor_fusion[0])),
         x_(sensor_fusion[1]),
         y_(sensor_fusion[2]),
@@ -39,7 +40,7 @@ public:
         lane_=int (d_/4.);
         speed_=sqrt(vx_*vx_+vy_*vy_);
         yaw_=atan2(vy_, vx_);
-        distance_=s_-my_car.s_;
+        distance_=s_distance(my_car.s_, s_);
         end_s_=s_+future_time*speed_;
     };
 

@@ -37,6 +37,7 @@ private:
 
 public:
     // Car my_car_;
+    double target_vel_;
     double ref_vel_;
     double lane_;
     double delta_t_;
@@ -49,6 +50,7 @@ public:
         maps_d_x_(maps_d_x),
         maps_d_y_(maps_d_y),
         state_(STATE_KEEP_LANE),
+        target_vel_(0),
         ref_vel_(0),
         lane_(1),
         delta_t_(0)
@@ -57,7 +59,7 @@ public:
 
     void new_sense(const Car &my_car, const vector<vector<double> > &raw_sensor_fusion, vector<double> &previous_path_x, vector<double> &previous_path_y){
         delta_t_=previous_path_x_.size()*.02;
-        sensor_fusion_.new_sense(my_car, raw_sensor_fusion, );
+        sensor_fusion_.new_sense(my_car, raw_sensor_fusion, delta_t_);
         previous_path_x_=previous_path_x;
         previous_path_y_=previous_path_y;
         // initialize
@@ -76,14 +78,14 @@ public:
     int state_;
     int current_lane_;
     int target_lane_;
-    double s_, speed_, delta_t_;
+    double s_, speed_;
 
-    StateInfo(int state, int current_lane, double s, double speed, double delta_t):
+    StateInfo(int state, int current_lane, double s, double speed):
     state_(state),
     current_lane_(current_lane),
     s_(s),
-    speed_(speed),
-    delta_t_(delta_t)
+    speed_(speed)
+    // delta_t_(delta_t)
     {
         if (state_==STATE_KEEP_LANE){
             target_lane_=current_lane;

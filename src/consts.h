@@ -8,6 +8,7 @@
 #define const_h
 
 #include "utils.h"
+#include <chrono>
 
 const int LANES = 3;
 const int MAX_LANE=LANES-1;
@@ -24,7 +25,11 @@ const double MAX_BUFFER_DISTANCE=100;
 const double COST_EFFICIENCY_WEIGHT=1e0;
 const double COST_COMFORT_WEIGHT=1e0;
 const double COST_SAFETY_WEIGHT=1e0;
-const double COST_LEGALITY_WEIGHT=1e0;
+const double COST_LEGALITY_WEIGHT=1e6;
 const double COST_FEASIBILITY_WEIGHT=1e0;
+
+const auto PLAN_INTERVAL=chrono::seconds(1);
+const double MAX_S = 6945.554;
+
 
 #endif // const_h

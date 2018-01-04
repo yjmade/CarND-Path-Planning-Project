@@ -1,4 +1,5 @@
 #include "utils.h"
+#include "consts.h"
 
 // Checks if the SocketIO event has JSON data.
 // If there is data the JSON object in string format will be returned,
@@ -150,3 +151,15 @@ double getAccelation(double current_speed, double target_speed){
   }
   return syn*MAX_SPEED_CHANGE;
 };
+
+
+double s_distance(double s1, double s2){
+  double diff = s2 - s1;
+  if (diff < -MAX_S / 2) {
+    return diff + MAX_S;
+  }
+  if (diff > MAX_S / 2) {
+    return diff - MAX_S;
+  }
+  return diff;
+}
