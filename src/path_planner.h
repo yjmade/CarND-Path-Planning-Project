@@ -90,10 +90,10 @@ public:
         if (state_==STATE_KEEP_LANE){
             target_lane_=current_lane;
         }
-        else if (state_ == STATE_CHANGE_LEFT && target_lane_ > 0) {
+        else if (state_ == STATE_CHANGE_LEFT) {
           target_lane_=current_lane-1;
         }
-        else if (state_ == STATE_CHANGE_RIGHT && target_lane_ < LANES) {
+        else if (state_ == STATE_CHANGE_RIGHT) {
           target_lane_=current_lane+1;
         }
     }
