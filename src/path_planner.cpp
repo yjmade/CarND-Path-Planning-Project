@@ -2,14 +2,15 @@
 #include "spline.h"
 #include "utils.h"
 #include "costs.h"
+#include <algorithm>
 
 
 void PathPlanner::next_state(){
         // int current_state=state_;
-
+  print "===========================";
   vector<int> possible_states={
-    STATE_KEEP_LANE,
     STATE_CHANGE_LEFT,
+    STATE_KEEP_LANE,
     STATE_CHANGE_RIGHT
   };
 
@@ -19,7 +20,7 @@ void PathPlanner::next_state(){
   for(int state: possible_states){
     StateInfo state_info(
       state,
-      sensor_fusion_.my_car_.lane_,
+      lane_,
       sensor_fusion_.my_car_.end_s_,
       sensor_fusion_.my_car_.speed_
     );
@@ -28,6 +29,8 @@ void PathPlanner::next_state(){
       lowest_cost=cost;
       lowest_cost_state=state;
     }
+    // cout<<"state "<<state<<"\tcost "<<cost<<"\n";
+    print "state", state, "cost", cost;
   }
 
   // lane_=lowest_cost_state->target_lane_;
@@ -52,11 +55,16 @@ void PathPlanner::next_state(){
     cout<<"closest_speed "<<"null"<<"\tvel "<<ref_vel_<<"\tlane "<<lane_<<endl;
   }else{
     cout<<"closest_speed "<<carp->speed_<<"distance() "<<carp->distance_<<"\tlane "<<lane_<<endl;
-    if(carp->distance_<MAX_BUFFER_DISTANCE)
-      {target_vel_=carp->speed_;}
-    else{
+    if(carp->distance_<MAX_BUFFER_DISTANCE && carp->distance_>NO_COLLISION_LIMIT){
+      target_vel_=min(carp->speed_+(MAX_SPEED-carp->speed_)*(carp->distance_-NO_COLLISION_LIMIT)/MAX_BUFFER_DISTANCE , MAX_SPEED);
+    }else if(carp->distance_<NO_COLLISION_LIMIT){
+      target_vel_=max(0.,carp->speed_-1);
+    }else{
       target_vel_=MAX_SPEED;
     }
+    if(target_vel_<0)target_vel_=0;
+
+    print "target_vel", target_vel_;
   }
 };
 
@@ -64,13 +72,13 @@ void PathPlanner::next_state(){
 
 vector<vector<double> > PathPlanner::next_path(){
     if(ref_vel_>target_vel_-1.){
-      ref_vel_-=0.5/2.24;
+      ref_vel_-=0.4/2.24;
     }else if(ref_vel_<MAX_SPEED){
-      ref_vel_+=0.5/2.24;
+      ref_vel_+=0.4/2.24;
     }
     // ref_vel_=target_speed;
     if(ref_vel_<0)ref_vel_=0;
-    cout<<"ref_vel_ "<<ref_vel_<<"\ttarget_speed "<<target_vel_<<"\n";
+    // cout<<"ref_vel_ "<<ref_vel_<<"\ttarget_speed "<<target_vel_<<"\n";
     vector<double> ptsx;
     vector<double> ptsy;
     int prev_size=previous_path_x_.size();
